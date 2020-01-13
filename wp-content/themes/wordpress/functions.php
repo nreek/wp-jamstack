@@ -27,4 +27,3 @@ require_once 'JAMStack/generators/ContentGenerator.php';
 require_once 'JAMStack/generators/ListGenerator.php';
 
 $jamstack = new JAMStack();
-

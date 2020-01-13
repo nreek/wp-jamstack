@@ -25,17 +25,22 @@ class JAMStack {
     }
 
     function hook(){
-        add_action( 'save_post', ['JAMStack', 'save_post'], 10, 3 );
+        add_action( 'post_updated', ['JAMStack', 'save_post'], 1000, 2 );
     }
 
-    function save_post(int $post_ID, WP_Post $post, bool $update){
+    function save_post(int $post_id, WP_Post $post){
+        $request_body = file_get_contents('php://input');
+        $request_data = json_decode($request_body);
+        
+        $ignore_post_types = [ 'Revision' ];
+        
         $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
-
-        if($class_name != 'Revision'){
-            $generator = new ContentGenerator($post);
+        
+        if(!in_array($class_name, $ignore_post_types)) {
+            $generator = new ContentGenerator($post, $request_data);
             
             if( class_exists($class_name) ){
-                $generator = new $class_name($post);
+                $generator = new $class_name($post, $request_data);
             }
             
             $generator->save_post();

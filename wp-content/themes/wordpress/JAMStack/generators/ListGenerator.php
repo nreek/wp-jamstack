@@ -23,7 +23,7 @@ class ListGenerator extends ContentGenerator {
             $content_query->the_post();
             global $post;
 
-            $this->postList[] = $this->prepare_post( $post, [ 'content' ] );
+            $this->postList[] = $this->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
         }
 
         \wp_reset_query();

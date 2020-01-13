@@ -3,8 +3,8 @@
 class Post extends ContentGenerator {
     public $post;
 
-    function __construct($post) {
-        parent::__construct($post);
+    function __construct($post, $request_data) {
+        parent::__construct($post, $request_data);
     }
 
     function extend_post() {
