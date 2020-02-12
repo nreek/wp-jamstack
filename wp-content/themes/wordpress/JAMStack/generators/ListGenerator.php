@@ -15,11 +15,11 @@ class ListGenerator extends ContentGenerator {
 
         $content_query = new WP_Query([
             'post_type'     => $cpts,
-            'ppp'           => 40,
+            'ppp'           => 100,
             'post_status'   => 'publish',
         ]);
 
-        while($content_query->have_posts()) {
+        while ($content_query->have_posts()) {
             $content_query->the_post();
             global $post;
 

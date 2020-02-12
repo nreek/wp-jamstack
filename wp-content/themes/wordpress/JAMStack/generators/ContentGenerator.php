@@ -30,6 +30,7 @@ class ContentGenerator implements IContentGenerator{
         $post = [
             'ID'        => $post->ID,
             'title'     => $post->post_title,
+            'type'      => get_post_type($post->ID),
             'excerpt'   => $excerpt,
             'slug'      => $post->post_name,
             'thumbnail' => $utils->get_thumbnail_info( $post->ID ),

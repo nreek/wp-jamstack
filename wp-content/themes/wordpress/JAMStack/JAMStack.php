@@ -37,16 +37,20 @@ class JAMStack {
         $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
         
         if(!in_array($class_name, $ignore_post_types)) {
-            $generator = new ContentGenerator($post, $request_data);
-            
-            if( class_exists($class_name) ){
-                $generator = new $class_name($post, $request_data);
+
+            if ( !class_exists($class_name) ) {
+                $class_name = 'ContentGenerator'; 
             }
-            
+
+            $generator = new $class_name($post, $request_data);
             $generator->save_post();
 
             $list_generator = new ListGenerator();
             $list_generator->generate_json();
         }
+
+        $terms_generator = new TermsGenerator($post, $request_data);
+        $blog_generator = new BlogGenerator();
+        $blog_generator->generate_json();
     }
 }
