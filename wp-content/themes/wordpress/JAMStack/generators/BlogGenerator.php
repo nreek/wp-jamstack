@@ -19,6 +19,7 @@ class BlogGenerator extends ContentGenerator {
             'title' => get_bloginfo('title'),
             'description' => get_bloginfo('description'),
             'homepage_json' => $homepage_json,
+            'backend_url' => get_home_url(),
             'header' => $this->header_styles(get_option('page_on_front'))
         ];
     }
