@@ -4,12 +4,14 @@ class ContentGenerator implements IContentGenerator{
     public $post;
     public $request_data;
 
-    function __construct($post, $request_data) {
+    function __construct($post, $request_data, $ignore = []) {
         $this->request_data = $request_data;
-        $this->post = $this->prepare_post($post);
+        $this->post = $this->prepare_post($post, $ignore);
     }
 
     function prepare_post( $post, $ignore = [] ) {
+        GLOBAL $pb_scripts;
+
         $content = get_the_content( null, false, $post->ID );
         $content = apply_filters( 'the_content', $content );
         $content = str_replace( ']]>', ']]&gt;', $content );
@@ -26,7 +28,7 @@ class ContentGenerator implements IContentGenerator{
         }
 
         $utils = new Utils($this->request_data);
-        
+
         $post = [
             'ID'        => $post->ID,
             'title'     => $post->post_title,
@@ -34,7 +36,8 @@ class ContentGenerator implements IContentGenerator{
             'excerpt'   => $excerpt,
             'slug'      => $post->post_name,
             'thumbnail' => $utils->get_thumbnail_info( $post->ID ),
-            'permalink' => get_permalink($post->ID)
+            'permalink' => get_permalink($post->ID),
+            'scripts'   => $pb_scripts[$post->ID]
         ];
 
         $this->prepare_taxonomies($post, $ignore);
