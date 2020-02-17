@@ -23,7 +23,8 @@ class Utils {
         if(isset($image['image_meta'])){
             unset($image['image_meta']);
         }
-        
+
+        $image['file'] = wp_get_upload_dir()['baseurl'] . '/' . $image['file'];
         return $image;
     }
 
