@@ -7,8 +7,16 @@ class Post extends ContentGenerator {
         parent::__construct($post, $request_data);
     }
 
+    public static function extended_data ($post_id) {
+        $author = get_post_meta($post_id, 'author', true);
+
+        return [ 'author' => $author ];
+    }
+    
     function extend_post() {
-        $this->post['meta']['author'] = 'João';
+        $extended_data = $this->extended_data(get_the_ID());
+        
+        $this->post['author'] = $extended_data['author'];
     }
 
     function save_post() {
