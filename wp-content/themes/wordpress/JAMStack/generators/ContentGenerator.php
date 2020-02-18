@@ -34,6 +34,7 @@ class ContentGenerator implements IContentGenerator{
             'title'     => $post->post_title,
             'type'      => get_post_type($post->ID),
             'excerpt'   => $excerpt,
+            'time'      => get_the_date('U', $post->ID),
             'slug'      => $post->post_name,
             'thumbnail' => $utils->get_thumbnail_info( $post->ID ),
             'permalink' => get_permalink($post->ID),
@@ -103,6 +104,7 @@ class ContentGenerator implements IContentGenerator{
                 'ID' => $tag->term_id,
                 'title' => $tag->name,
                 'slug' => $tag->slug, 
+                'parent' => $tag->parent,
                 'permalink' => get_term_link($tag->term_id, $taxonomy)
             ];
         }
