@@ -10,6 +10,13 @@ add_action('cmb2_admin_init', function () {
         'show_names' => true,
     ));
 
+    $cmb_post->add_field(array(
+        'name' => 'Autor',
+        'id' => 'author',
+        'defaul' => 'Redação',
+        'type' => 'text'
+    ));
+
     $cmb_newsletter = new_cmb2_box(array(
         'id' => 'newsletter_metabox',
         'title' => "Informações do cadastro",
