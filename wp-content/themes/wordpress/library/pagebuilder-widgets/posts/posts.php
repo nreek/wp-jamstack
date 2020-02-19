@@ -46,6 +46,32 @@ class Posts extends \SiteOrigin_Widget {
         return 'style';
     }
 
+    function get_template_variables( $instance ) {
+        $post_id = $_POST['post_ID'];
+
+        $hash = 'posts_'. md5($instance['posts']);
+        $processed_query = siteorigin_widget_post_selector_process_query( $instance['posts'] );
+        $posts_query = new \WP_Query( $processed_query );
+        $posts = [];
+
+        
+        if($posts_query->have_posts()){
+            while($posts_query->have_posts()){
+                $posts_query->the_post();
+                global $post;
+
+                $posts[] = $post->post_name;
+            }
+        }
+
+        localize_scripts($post_id, $hash, [ 'relations' => $posts ] );
+        wp_reset_postdata();
+        
+        return array(
+            'hash' => $hash
+        );
+    }
+
 }
 
 Siteorigin_widget_register('posts', __FILE__, 'widgets\Posts');
