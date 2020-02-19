@@ -40,26 +40,16 @@ class Slider extends \SiteOrigin_Widget {
         $posts_query = new \WP_Query( $processed_query );
         $posts = [];
 
-        
         if($posts_query->have_posts()){
             while($posts_query->have_posts()){
                 $posts_query->the_post();
                 global $post;
 
-                $class_name = '\\'.str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
-                if ( !class_exists($class_name) ) {
-                    $class_name = '\ContentGenerator';
-                }
-                
-                $generator = new $class_name($post, [], [ 'content', 'meta', 'post_format' ]);
-
-                if( $class_name != '\ContentGenerator' ) $generator->extend_post();
-
-                $posts[] = $generator->post;
+                $posts[] = $post->post_name;
             }
         }
 
-        localize_scripts($post_id, $hash, $posts);
+        localize_scripts( $post_id, $hash, [ 'relations' => $posts ]);
         wp_reset_postdata();
         
         return array(
