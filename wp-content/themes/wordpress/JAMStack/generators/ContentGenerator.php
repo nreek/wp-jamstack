@@ -37,7 +37,7 @@ class ContentGenerator implements IContentGenerator{
             'time'      => get_the_date('U', $post->ID),
             'slug'      => $post->post_name,
             'thumbnail' => $utils->get_thumbnail_info( $post->ID ),
-            'permalink' => get_permalink($post->ID),
+            'permalink' => str_replace(get_home_url(), '', get_permalink($post->ID)),
             'scripts'   => $pb_scripts[$post->ID]
         ];
 
