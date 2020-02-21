@@ -17,6 +17,26 @@ add_action('cmb2_admin_init', function () {
         'type' => 'text'
     ));
 
+    $colunistas = ['' => 'Nenhum'];
+    $colunistas_query = new WP_Query([
+        'post_type' => 'colunistas',
+        'ppp'       => -1,
+        'post_status' => 'publish'
+    ]);
+    
+    while($colunistas_query->have_posts()) {
+        $colunistas_query->the_post();
+        $colunistas[get_the_ID()] = get_the_title();
+    }
+    wp_reset_postdata();
+
+    $cmb_post->add_field(array(
+        'name' => 'Colunista',
+        'id' => 'colunista',
+        'type' => 'select',
+        'options' => $colunistas
+    ));
+
     $cmb_newsletter = new_cmb2_box(array(
         'id' => 'newsletter_metabox',
         'title' => "Informações do cadastro",
