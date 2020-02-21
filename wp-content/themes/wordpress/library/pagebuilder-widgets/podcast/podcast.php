@@ -41,6 +41,31 @@ class Podcast extends \SiteOrigin_Widget {
                 'label' => 'Link do botão',
                 'default' => '/podcast'
             ],
+            'network_text' => [
+                'type' => 'text',
+                'label' => 'Texto da chamada para assinar às redes',
+                'default' => 'Assine: '
+            ],
+            'networks' => array(
+                'type' => 'repeater',
+                'label' => __( 'Links de Podcast' , 'widget-form-fields-text-domain' ),
+                'item_name'  => __( 'Links', 'siteorigin-widgets' ),
+                'fields' => array(
+                    'url' => array(
+                        'type' => 'text',
+                        'label' => __( 'URL do link.', 'widget-form-fields-text-domain' )
+                    ),
+                    'icon' => array(
+                        'type' => 'text',
+                        'label' => __( 'Ícone', 'example-text-domain' )
+                    ),
+                    'image' => [
+                        'type' => 'media',
+                        'label' => 'ou Imagem',
+                        'description' => '(para quando não houver ícone no fontawesome)'
+                    ],
+                )
+            )
         ];
 
         parent::__construct('podcast', 'Banner de Podcast', [
