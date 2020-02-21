@@ -4,7 +4,7 @@
   Widget Name: Título com Botão
   Description: Título com Botão
   Author: DNA
-  Author URI: https://dnaeducacaofisica.com.br
+  Author URI: https://smartfit.com.br/conteudo
  */
 
 namespace widgets;
