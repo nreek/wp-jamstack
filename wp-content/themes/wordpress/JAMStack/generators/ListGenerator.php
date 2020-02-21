@@ -2,22 +2,24 @@
 
 class ListGenerator extends ContentGenerator {
     public $postList = [];
+    public $postListByType = [];
 
     function __construct() {
         $this->prepare_list();
     }
 
     function prepare_list() {
-        $cpts = get_post_types([ 'show_in_rest' => true, 'public' => true ]);
-        $cpts = array_filter($cpts, function ($cpt) {
+        $cpts = get_post_types( [ 'show_in_rest' => true, 'public' => true ] );
+        $cpts = array_keys( array_filter( $cpts, function ($cpt) {
             return $cpt != 'attachment' && $cpt != 'page'; 
-        });
+        }) );
 
         $content_query = new WP_Query([
             'post_type'     => $cpts,
             'ppp'           => 100,
             'post_status'   => 'publish',
         ]);
+    
 
         while ($content_query->have_posts()) {
             $content_query->the_post();
@@ -29,8 +31,10 @@ class ListGenerator extends ContentGenerator {
             if ( class_exists($class_name) ) {
                 $extended_data = $class_name::extended_data($post->ID);
             }
-            
-            $this->postList[] = array_merge( $this->prepare_post( $post, [ 'content', 'tags', 'meta' ] ), $extended_data);
+
+            $final_post = array_merge( $this->prepare_post( $post, [ 'content', 'tags', 'meta' ] ), $extended_data);
+            $this->postList[] = $final_post;
+            $this->postListByType[$post->post_type][] = $final_post;
         }
 
         \wp_reset_query();
@@ -40,5 +44,9 @@ class ListGenerator extends ContentGenerator {
         $filepath = WP_CONTENT_DIR.'/data/content.json';
 
         file_put_contents($filepath, json_encode($this->postList));
+
+        foreach( $this->postListByType as $type => $postList ) {
+            file_put_contents(WP_CONTENT_DIR.'/data/'. $type .'.json', json_encode($postList));
+        }
     }
 }
