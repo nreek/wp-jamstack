@@ -15,7 +15,7 @@ class ContentGenerator implements IContentGenerator{
         $content = get_the_content( null, false, $post->ID );
         $content = apply_filters( 'the_content', $content );
         $content = str_replace( ']]>', ']]&gt;', $content );
-            
+        $content = str_replace('<style type="text/css"></style>', '', $content);
         $excerpt = has_excerpt( $post->ID ) ? get_the_excerpt( $post->ID ) : '';
 
         // Exclude unuseful meta data such as "_ping" and etc, which conventionaly starts with a _
@@ -42,7 +42,7 @@ class ContentGenerator implements IContentGenerator{
         ];
 
         $this->prepare_taxonomies($post, $ignore);
-        
+
         $ignorable_fields = [ 'content', 'meta' ];
 
         // Itera entre os campos que são passíveis de serem excluídos e os atribui ao objeto post caso não devam ser ignorados. Utilizado para diminuir o tamanho do objeto resultado. 
