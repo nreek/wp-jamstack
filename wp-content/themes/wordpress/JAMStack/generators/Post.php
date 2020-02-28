@@ -17,6 +17,7 @@ class Post extends ContentGenerator {
         $extended_data = $this->extended_data(get_the_ID());
         
         $this->post['author'] = $extended_data['author'];
+        $this->post['related_posts'] = get_post_meta(get_the_ID(), 'related_posts', false);
     }
 
     function save_post() {
