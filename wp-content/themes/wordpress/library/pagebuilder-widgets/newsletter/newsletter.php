@@ -22,13 +22,21 @@ class Newsletter extends \SiteOrigin_Widget {
                 'label' => 'Descrição',
             ],
             'success_message' => [
-                'type' => 'tinymce',
+                'type' => 'text',
                 'label' => 'Mensagem de conclusão de cadastro',
             ],
             'error_message' => [
-                'type' => 'tinymce',
+                'type' => 'text',
                 'label' => 'Mensagem de erro de cadastro',
             ],
+            'extruded' => [
+                'type' => 'select',
+                'label' => 'Fundo preenche a tela inteira?',
+                'options' => [
+                    'false' => 'Não',
+                    'true' => 'Sim'
+                ]
+            ]
         ];
 
         parent::__construct('newsletter', 'Newsletter', [
