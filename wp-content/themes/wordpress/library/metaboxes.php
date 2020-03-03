@@ -17,6 +17,13 @@ add_action('cmb2_admin_init', function () {
         'type' => 'text'
     ));
 
+    $cmb_post->add_field(array(
+        'name' => 'Foi de ajuda?',
+        'id' => 'helpful',
+        'defaul' => '0',
+        'type' => 'text'
+    ));
+
     $colunistas = ['' => 'Nenhum'];
     // $colunistas_query = new WP_Query([
     //     'post_type' => 'colunistas',
@@ -91,6 +98,7 @@ add_action('cmb2_admin_init', function () {
             ),
         ) );
     }
+
     $cmb_newsletter = new_cmb2_box(array(
         'id' => 'newsletter_metabox',
         'title' => "Informações do cadastro",
@@ -101,14 +109,23 @@ add_action('cmb2_admin_init', function () {
     ));
 
     $cmb_newsletter->add_field(array(
-        'name' => 'E-mail',
-        'id' => 'email',
+        'name' => 'Editorias',
+        'id' => 'editorials',
         'type' => 'text'
     ));
 
-    $cmb_newsletter->add_field(array(
-        'name' => 'Whatsapp',
-        'id' => 'whatsapp',
+    $cmb_suggestion = new_cmb2_box(array(
+        'id' => 'suggestion_metabox',
+        'title' => "Informações do cadastro",
+        'object_types' => array('suggestion'), // Post type
+        'context' => 'normal',
+        'priority' => 'high',
+        'show_names' => true,
+    ));
+
+    $cmb_suggestion->add_field(array(
+        'name' => 'Post',
+        'id' => 'parent_id',
         'type' => 'text'
     ));
 });

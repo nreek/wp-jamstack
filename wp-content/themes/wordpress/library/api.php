@@ -9,7 +9,46 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'smart_archive',
     ));
+
+    register_rest_route('smart/v1', '/related_posts', array(
+        'methods' => 'GET',
+        'callback' => 'smart_related_posts',
+    ));
+
+    register_rest_route('smart/v1', '/suggestion', array(
+        'methods' => 'POST',
+        'callback' => 'smart_suggestion',
+    ));
 });
+
+
+function smart_related_posts(WP_REST_Request $request) {
+    $posts_ids = $request->get_param('posts');
+    $related_posts = [];
+
+    $related_posts_query = new WP_Query([
+        'post__in' => $posts_ids,
+        'post_status' => 'publish',
+    ]);
+
+    while($related_posts_query->have_posts()) {
+        $related_posts_query->the_post();
+        global $post;
+        
+        $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
+        if ( !class_exists($class_name) ) {
+            $class_name = 'ContentGenerator';
+        }
+
+        $generator = new $class_name($post, []);
+        $related_posts[] = $generator->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
+    }
+
+    wp_reset_postdata();
+
+    return $related_posts;
+}
+
 
 function smart_add_custom_endpoint( $allowed_endpoints ) {
     if ( ! isset( $allowed_endpoints[ 'smart/v1' ] ) || ! in_array( 'archive', $allowed_endpoints[ 'smart/v1' ] ) ) {
@@ -20,19 +59,17 @@ function smart_add_custom_endpoint( $allowed_endpoints ) {
 add_filter( 'wp_rest_cache/allowed_endpoints', 'smart_add_custom_endpoint', 10, 1);
 
 function smart_newsletter(WP_REST_Request $request) {
-    $name = $request->get_param( 'name' );
     $email = $request->get_param( 'email' );
-    $whatsapp = $request->get_param( 'whatsapp' );
+    $editorials = $request->get_param( 'editorials' );
     
-    if(!empty($name) && !empty($email) && !empty($whatsapp) ) {
+    if( !empty($email) ) {
         $lead = wp_insert_post([
-            'post_title' => $name,
+            'post_title' => $email,
             'post_type'  => 'newsletter',
             'post_status' => 'publish'
         ]);
 
-        add_post_meta($lead, 'email', $email, true);
-        add_post_meta($lead, 'whatsapp', $whatsapp, true);
+        add_post_meta($lead, 'editorials', join(', ', $editorials));
     }
 
     if ( !isset($lead) || $lead == '0' ) {
@@ -40,6 +77,36 @@ function smart_newsletter(WP_REST_Request $request) {
     }
 
     return [ 'post' => $lead ];
+}
+
+
+function smart_suggestion(WP_REST_Request $request) {
+    $parent_id = $request->get_param( 'parent_id' );
+    $message = $request->get_param( 'message' );
+    $helpful = $request->get_param( 'helpful' );
+    
+    if($helpful == 'yes') {
+        $helpful_qtd = get_post_meta($parent_id, 'helpful', true);
+        update_post_meta($parent_id, 'helpful', ($helpful_qtd+1) );
+        return [ 'post' => $parent_id ];
+    } 
+
+
+    if( !empty($parent_id) ) {
+        $post = wp_insert_post([
+            'post_title' => $message,
+            'post_type'  => 'suggestion',
+            'post_status' => 'publish'
+        ]);
+
+        add_post_meta($post, 'parent_id', $parent_id);
+    }
+
+    if ( !isset($post) || $post == '0' ) {
+        return new WP_Error( 'register_failed', 'Falha ao cadastrar', array( 'status' => 500 ) );
+    }
+
+    return [ 'post' => $post ];
 }
 
 function smart_archive( WP_REST_Request $request ) {
