@@ -10,6 +10,11 @@ add_action('rest_api_init', function () {
         'callback' => 'smart_archive',
     ));
 
+    register_rest_route('smart/v1', '/search', array(
+        'methods' => 'GET',
+        'callback' => 'smart_search',
+    ));
+
     register_rest_route('smart/v1', '/related_posts', array(
         'methods' => 'GET',
         'callback' => 'smart_related_posts',
@@ -165,4 +170,33 @@ function smart_archive( WP_REST_Request $request ) {
         'relations' => $relations,
     ];
 }
-  
+
+function smart_search( WP_REST_Request $request ) {
+    $s = $request->get_param('s');
+    $posts = [];
+
+    $s_query = new WP_Query([
+        'post_status' => 'publish',
+        's' => $s,
+    ]);
+
+
+    while($s_query->have_posts()) {
+        $s_query->the_post();
+        global $post;
+        
+        $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
+        if ( !class_exists($class_name) ) {
+            $class_name = 'ContentGenerator';
+        }
+
+        $generator = new $class_name($post, []);
+        $related_posts[] = $generator->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
+    }
+
+    wp_reset_postdata();
+
+    return $related_posts;
+
+
+}
