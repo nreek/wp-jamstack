@@ -8,6 +8,7 @@ add_theme_support( 'custom-logo' );
 
 add_theme_support( 'align-wide' );
 add_theme_support( 'post-thumbnails' );
+add_post_type_support( 'page', 'excerpt' );
 
 function custom_menus() {
     register_nav_menu('main-menu',__( 'Menu Principal' ));
