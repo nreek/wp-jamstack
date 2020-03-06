@@ -103,9 +103,9 @@ class ContentGenerator implements IContentGenerator{
             $tags[] = [
                 'ID' => $tag->term_id,
                 'title' => $tag->name,
-                'slug' => $tag->slug, 
+                'slug' => $tag->slug,
                 'parent' => $tag->parent,
-                'permalink' => get_term_link($tag->term_id, $taxonomy)
+                'permalink' => str_replace(get_home_url(), '', get_term_link($tag->term_id, $taxonomy))
             ];
         }
 
