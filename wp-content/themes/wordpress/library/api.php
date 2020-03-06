@@ -24,7 +24,44 @@ add_action('rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'smart_suggestion',
     ));
+
+    register_rest_route('smart/v1', '/videos/related_posts', array(
+        'methods' => 'GET',
+        'callback' => 'smart_videos_related_posts',
+    ));
 });
+
+
+function smart_videos_related_posts(WP_REST_Request $request) {
+    $video_id = $request->get_param('id');
+    $related_posts = [];
+
+    $query_related_posts = new WP_Query([
+        'post_type' => 'post',
+        'ppp' => 9,
+        'post_status' => 'publish',
+        'meta_key' => 'post_related_videos',
+        'meta_value' => $video_id,
+        'meta_compare' => 'LIKE'
+    ]);
+
+    while($query_related_posts->have_posts()) {
+        $query_related_posts->the_post();
+        global $post;
+        
+        $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
+        if ( !class_exists($class_name) ) {
+            $class_name = 'ContentGenerator';
+        }
+
+        $generator = new $class_name($post, []);
+        $related_posts[] = $generator->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
+    }
+
+    wp_reset_postdata();
+
+    return $related_posts;
+}
 
 
 function smart_related_posts(WP_REST_Request $request) {
