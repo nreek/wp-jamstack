@@ -24,14 +24,20 @@ class Colunistas extends ContentGenerator {
                 'permalink' => get_the_permalink($post->ID)
             ];
         }
-
+        
+        wp_reset_postdata();
         return [ 'last_post' => $last_post ];
     }
     
     function extend_post() {
         $extended_data = $this->extended_data(get_the_ID());
         
+        $main_menu = get_post_meta(get_the_ID(), 'colunista_menu-principal', true);
+        $social_networks = get_post_meta(get_the_ID(), 'colunista_redes-sociais', true);
+
         $this->post['last_post'] = $extended_data['last_post'];
+        $this->post['main_menu'] = $main_menu;
+        $this->post['social_networks'] = $social_networks;
     }
 
     function save_post() {
