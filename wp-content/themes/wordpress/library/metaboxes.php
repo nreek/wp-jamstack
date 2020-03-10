@@ -4,7 +4,7 @@ add_action('cmb2_admin_init', function () {
     $cmb_post = new_cmb2_box(array(
         'id' => 'post_metabox',
         'title' => "Opções de Post",
-        'object_types' => array('post'), // Post type
+        'object_types' => array('post'), 
         'context' => 'normal',
         'priority' => 'high',
         'show_names' => true,
@@ -13,7 +13,7 @@ add_action('cmb2_admin_init', function () {
     $cmb_post_side = new_cmb2_box(array(
         'id' => 'post_metabox_side',
         'title' => "Infos de Post",
-        'object_types' => array('post'), // Post type
+        'object_types' => array('post'), 
         'context' => 'side',
         'priority' => 'low',
         'show_names' => true,
@@ -34,18 +34,18 @@ add_action('cmb2_admin_init', function () {
     ));
 
     $colunistas = ['' => 'Nenhum'];
-    // $colunistas_query = new WP_Query([
-    //     'post_type' => 'colunistas',
-    //     'ppp'       => -1,
-    //     'post_status' => 'publish'
-    // ]);
+    $colunistas_query = new WP_Query([
+        'post_type' => 'colunistas',
+        'ppp'       => -1,
+        'post_status' => 'publish'
+    ]);
     
-    // while($colunistas_query->have_posts()) {
-    //     $colunistas_query->the_post();
-    //     $colunistas[get_the_ID()] = get_the_title();
-    // }
-    // wp_reset_postdata();
-    // wp_reset_query();
+    while($colunistas_query->have_posts()) {
+        $colunistas_query->the_post();
+        $colunistas[get_the_ID()] = get_the_title();
+    }
+    wp_reset_postdata();
+    wp_reset_query();
 
     $cmb_post->add_field(array(
         'name' => 'Colunista',
@@ -53,14 +53,6 @@ add_action('cmb2_admin_init', function () {
         'type' => 'select',
         'options' => $colunistas
     ));
-
-    $cmb_post->add_field(array(
-        'name' => 'Colunista',
-        'id' => 'colunista',
-        'type' => 'select',
-        'options' => $colunistas
-    ));
-
 
     $cmb_post_related = $cmb_post->add_field( array(
         'id'          => 'post_related_videos',
@@ -130,7 +122,7 @@ add_action('cmb2_admin_init', function () {
     $cmb_newsletter = new_cmb2_box(array(
         'id' => 'newsletter_metabox',
         'title' => "Informações do cadastro",
-        'object_types' => array('newsletter'), // Post type
+        'object_types' => array('newsletter'), 
         'context' => 'normal',
         'priority' => 'high',
         'show_names' => true,
@@ -145,7 +137,7 @@ add_action('cmb2_admin_init', function () {
     $cmb_suggestion = new_cmb2_box(array(
         'id' => 'suggestion_metabox',
         'title' => "Informações do cadastro",
-        'object_types' => array('suggestion'), // Post type
+        'object_types' => array('suggestion'), 
         'context' => 'normal',
         'priority' => 'high',
         'show_names' => true,
@@ -156,4 +148,35 @@ add_action('cmb2_admin_init', function () {
         'id' => 'parent_id',
         'type' => 'text'
     ));
+
+    $cmb_colunistas = new_cmb2_box(array(
+        'id' => 'colunista_metabox',
+        'title' => "Opções de Colunista",
+        'object_types' => array('colunistas'), 
+        'context' => 'normal',
+        'priority' => 'high',
+        'show_names' => true,
+    ));
+
+    $nav_menus = wp_get_nav_menus(); 
+    $menus = ['' => 'Nenhum'];
+
+    foreach ($nav_menus as $menu){
+        $menus[$menu->slug] = $menu->name;
+    }
+
+    $cmb_colunistas->add_field(array(
+        'name' => 'Menu principal',
+        'id' => 'colunista_menu-principal',
+        'type' => 'select',
+        'options' => $menus,
+    ));
+
+    $cmb_colunistas->add_field(array(
+        'name' => 'Menu de Redes Sociais',
+        'id' => 'colunista_redes-sociais',
+        'type' => 'select',
+        'options' => $menus,
+    ));
+
 });
