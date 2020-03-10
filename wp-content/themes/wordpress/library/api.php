@@ -29,8 +29,39 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'smart_videos_related_posts',
     ));
+
+    register_rest_route('smart/v1', '/colunistas/posts', array(
+        'methods' => 'GET',
+        'callback' => 'smart_colunistas_post',
+    ));
 });
 
+
+function smart_colunistas_post(WP_REST_Request $request) {
+    $id = $request->get_param('id');
+    $posts = [];
+
+    $colunistas_post_query = new WP_Query([
+        'ppp' => 9,
+        'meta_key' => 'colunista',
+        'meta_value' => $id,
+        'post_status' => 'publish'
+    ]);
+
+    foreach ( $colunistas_post_query->posts as $post ) {
+        $colunistas_post_query->the_post();
+        global $post;
+        
+        $generator = new Post($post, [], [ 'content', 'tags', 'meta' ]);
+        $generator->extend_post();
+        $posts[] = $generator->post;
+        
+    }
+    
+    wp_reset_postdata();
+
+    return $posts;
+}
 
 function smart_videos_related_posts(WP_REST_Request $request) {
     $video_id = $request->get_param('id');
