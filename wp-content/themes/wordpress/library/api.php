@@ -32,7 +32,7 @@ add_action('rest_api_init', function () {
 
     register_rest_route('smart/v1', '/colunistas/posts', array(
         'methods' => 'GET',
-        'callback' => 'smart_colunistas_post',
+        'callback' => 'smart_colunistas_posts',
     ));
 
     register_rest_route('smart/v1', '/generate_json', array(
@@ -42,12 +42,14 @@ add_action('rest_api_init', function () {
 });
 
 
-function smart_colunistas_post(WP_REST_Request $request) {
+function smart_colunistas_posts(WP_REST_Request $request) {
     $id = $request->get_param('id');
+    $paged = $request->get_param('paged');
     $posts = [];
 
     $colunistas_post_query = new WP_Query([
         'posts_per_page' => 9,
+        'paged' => $paged,
         'meta_key' => 'colunista',
         'meta_value' => $id,
         'post_status' => 'publish'
@@ -190,6 +192,7 @@ function smart_suggestion(WP_REST_Request $request) {
 
 function smart_archive( WP_REST_Request $request ) {
     $term_slug = $request->get_param('term');
+    $paged = $request->get_param('paged') ? $request->get_param('paged') : 1;
 
     $term = get_terms([ 
         'get'                    => 'all',
@@ -208,6 +211,7 @@ function smart_archive( WP_REST_Request $request ) {
 
     $terms_query = new WP_Query( [
         'posts_per_page' => '9',
+        'paged' => $paged,
         'post_status' => 'publish',
         'tax_query' => array(
             array(
