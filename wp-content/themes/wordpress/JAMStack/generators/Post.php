@@ -3,7 +3,7 @@
 class Post extends ContentGenerator {
     public $post;
 
-    function __construct($post, $request_data, $ignore) {
+    function __construct($post, $request_data, $ignore = []) {
         parent::__construct($post, $request_data, $ignore);
     }
 
@@ -17,6 +17,7 @@ class Post extends ContentGenerator {
                 'ID' => $colunista_id,
                 'title' => get_the_title($colunista_id),
                 'permalink' => replace_home_url(get_the_permalink($colunista_id)),
+                'slug' => get_post_field('post_name', $colunista_id),
             ];
         }
 
