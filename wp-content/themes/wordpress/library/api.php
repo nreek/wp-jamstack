@@ -42,7 +42,7 @@ function smart_colunistas_post(WP_REST_Request $request) {
     $posts = [];
 
     $colunistas_post_query = new WP_Query([
-        'ppp' => 9,
+        'posts_per_page' => 9,
         'meta_key' => 'colunista',
         'meta_value' => $id,
         'post_status' => 'publish'
@@ -69,7 +69,7 @@ function smart_videos_related_posts(WP_REST_Request $request) {
 
     $query_related_posts = new WP_Query([
         'post_type' => 'post',
-        'ppp' => 9,
+        'posts_per_page' => 9,
         'post_status' => 'publish',
         'meta_key' => 'post_related_videos',
         'meta_value' => $video_id,
@@ -102,6 +102,7 @@ function smart_related_posts(WP_REST_Request $request) {
     $related_posts_query = new WP_Query([
         'post__in' => $posts_ids,
         'post_status' => 'publish',
+        'posts_per_page' => 6
     ]);
 
     while($related_posts_query->have_posts()) {
@@ -201,7 +202,7 @@ function smart_archive( WP_REST_Request $request ) {
     $relations = [];
 
     $terms_query = new WP_Query( [
-        'ppp' => '40',
+        'posts_per_page' => '9',
         'post_status' => 'publish',
         'tax_query' => array(
             array(

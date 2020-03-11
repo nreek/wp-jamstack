@@ -16,7 +16,7 @@ class ListGenerator extends ContentGenerator {
 
         $content_query = new WP_Query([
             'post_type'     => $cpts,
-            'ppp'           => 100,
+            'posts_per_page'           => 100,
             'post_status'   => 'publish',
         ]);
     

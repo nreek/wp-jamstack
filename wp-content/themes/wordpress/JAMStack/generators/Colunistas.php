@@ -11,7 +11,7 @@ class Colunistas extends ContentGenerator {
         $last_post = false;
 
         $last_post_query = new WP_Query([
-            'ppp' => 1,
+            'posts_per_page' => 1,
             'meta_key' => 'colunista',
             'meta_value' => $post_id,
             'post_status' => 'publish'

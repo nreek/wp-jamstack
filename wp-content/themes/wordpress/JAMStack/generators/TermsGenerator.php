@@ -35,7 +35,7 @@ class TermsGenerator extends ContentGenerator {
         foreach ($terms as $term) {
 
             $terms_query = new WP_Query( [
-                'ppp' => '40',
+                'posts_per_page' => '40',
                 'post_status' => 'publish',
                 'tax_query' => array(
                     array(
@@ -46,11 +46,18 @@ class TermsGenerator extends ContentGenerator {
                 ),
             ] );
     
+            $term_data = get_term($term);
+            $this->postList[$term] = [
+                'ID' => $term,
+                'title' => $term_data->name,
+                'order' => $term_data->order,
+            ];
+
             while($terms_query->have_posts()) {
                 $terms_query->the_post();
                 global $post;
-    
-                $this->postList[$term][] = $this->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
+
+                $this->postList[$term]['relations'] = $this->prepare_post( $post, [ 'content', 'tags', 'meta' ] );
             }
 
             \wp_reset_query();

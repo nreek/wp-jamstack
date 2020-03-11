@@ -36,7 +36,7 @@ add_action('cmb2_admin_init', function () {
     $colunistas = ['' => 'Nenhum'];
     $colunistas_query = new WP_Query([
         'post_type' => 'colunistas',
-        'ppp'       => -1,
+        'posts_per_page'       => -1,
         'post_status' => 'publish'
     ]);
     
