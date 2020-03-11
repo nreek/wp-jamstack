@@ -34,6 +34,11 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'smart_colunistas_post',
     ));
+
+    register_rest_route('smart/v1', '/generate_json', array(
+        'methods' => 'GET',
+        'callback' => 'smart_generate_json',
+    ));
 });
 
 
@@ -268,4 +273,39 @@ function smart_search( WP_REST_Request $request ) {
     return $related_posts;
 
 
+}
+
+function smart_generate_json ( WP_REST_Request $request ) {
+    $start = microtime(TRUE);
+    $posts_generated = [];
+
+    $posts_query = new WP_Query( [
+        'posts_per_page' => '-1',
+        'post_type' => [ 'post', 'page', 'colunistas' ],
+        'nopaging' => true
+    ]);
+
+    while($posts_query->have_posts()) {
+        $posts_query->the_post();
+        global $post; 
+
+
+        $class_name = str_replace(' ', '', ucwords(str_replace('-', ' ', $post->post_type)));
+        if ( !class_exists($class_name) ) {
+            $class_name = 'ContentGenerator';
+        }
+
+        $generator = new $class_name($post, []);
+        $generator->save_post();
+        $posts_generated[] = $post->ID;
+    }
+
+    wp_reset_postdata();
+    $end = microtime(TRUE);
+
+    return [
+        'count' => count($posts_generated),
+        'time_spent' => ($end - $start),
+        'generated' => $posts_generated,
+    ];
 }
