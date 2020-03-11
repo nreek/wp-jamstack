@@ -1,0 +1,1 @@
+header('Location: '.'http://localhost:3000'.$_SERVER['REQUEST_URI']);
