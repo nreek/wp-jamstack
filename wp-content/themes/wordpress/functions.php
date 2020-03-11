@@ -59,6 +59,7 @@ function localize_scripts($object_name, $hash, $l10n){
 
 function replace_home_url( $url ) {
     if ( strpos( $url, get_home_url()) > -1) {
+        $url = str_replace('category', 'categoria', $url);
         return str_replace(get_home_url(), '', $url);
     }
 
