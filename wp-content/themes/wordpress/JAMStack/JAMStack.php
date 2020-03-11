@@ -49,7 +49,7 @@ class JAMStack {
             $list_generator->generate_json();
         }
 
-        $terms_generator = new TermsGenerator($post, $request_data);
+        // $terms_generator = new TermsGenerator($post, $request_data);
         $blog_generator = new BlogGenerator();
         $blog_generator->generate_json();
     }
