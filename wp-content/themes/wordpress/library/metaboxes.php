@@ -54,25 +54,6 @@ add_action('cmb2_admin_init', function () {
         'options' => $colunistas
     ));
 
-    $cmb_post_related = $cmb_post->add_field( array(
-        'id'          => 'post_related_videos',
-        'type'        => 'group',
-        'name' => __( 'Vídeos Relacionados', 'cmb2' ),
-        'repeatable'  => true, // use false if you want non-repeatable group
-        'options'     => array(
-            'group_title'       => __( 'Vídeo {#}', 'cmb2' ), // since version 1.1.4, {#} gets replaced by row number
-            'add_button'        => __( 'Adicionar outro Vídeo', 'cmb2' ),
-            'remove_button'     => __( 'Remover Vídeo', 'cmb2' ),
-            'sortable'          => true,
-        ),
-    ) );
-
-    $cmb_post->add_group_field($cmb_post_related, array(
-        'name' => 'ID do vídeo relacionado',
-        'id' => 'post_related_video',
-        'type' => 'text'
-    ));
-
     if( isset($_GET['post']) ) {
         $related_posts_meta = get_post_meta($_GET['post'], 'related_posts', true);
         
