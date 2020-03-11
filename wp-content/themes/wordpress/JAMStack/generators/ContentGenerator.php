@@ -20,12 +20,15 @@ class ContentGenerator implements IContentGenerator{
 
         // Exclude unuseful meta data such as "_ping" and etc, which conventionaly starts with a _
         $post_metas = get_post_meta($post->ID);
-        $meta = [];
+
+        $meta = $yoast = [];
         foreach( $post_metas as $key => $value ) {
             if( $key[0] != '_' ) {
-                $meta[$key] = $value;
+                $meta[$key] = is_serialized($value[0]) ? unserialize($value[0]) : $value[0];
             }
         }
+
+        $yoast = $this->prepare_yoast($post_metas);
 
         $utils = new Utils($this->request_data);
 
@@ -43,7 +46,7 @@ class ContentGenerator implements IContentGenerator{
 
         $this->prepare_taxonomies($post, $ignore);
 
-        $ignorable_fields = [ 'content', 'meta' ];
+        $ignorable_fields = [ 'content', 'meta', 'yoast' ];
 
         // Itera entre os campos que são passíveis de serem excluídos e os atribui ao objeto post caso não devam ser ignorados. Utilizado para diminuir o tamanho do objeto resultado. 
         foreach($ignorable_fields as $field){
@@ -105,11 +108,33 @@ class ContentGenerator implements IContentGenerator{
                 'title' => $tag->name,
                 'slug' => $tag->slug,
                 'parent' => $tag->parent,
-                'permalink' => str_replace(get_home_url(), '', get_term_link($tag->term_id, $taxonomy))
+                'permalink' => replace_home_url( get_term_link($tag->term_id, $taxonomy) )
             ];
         }
 
         return $tags;
+    }
+
+    function prepare_yoast($meta) {
+
+        $image = wp_get_attachment_image_src( issetOrDefault( $meta["_thumbnail_id"], $meta['_yoast_wpseo_opengraph-image-id']) , 'full');
+
+        $yoast = array(
+            [ 'property' => "og:title", 'content' => issetOrDefault($meta['_yoast_wpseo_opengraph-title'], $meta['_yoast_wpseo_title'] ) ],
+            [ 'property' => "og:description", 'content' => issetOrDefault($meta["_yoast_wpseo_opengraph-description"], $meta['_yoast_wpseo_metadesc'] ) ],
+            [ 'property' => "article:published_time", 'content' => get_post_time('c', false, $this->post['ID']) ],
+            [ 'property' => "article:modified_time", 'content' => get_post_modified_time('c', false, $this->post['ID']) ],
+            [ 'property' => "og:updated_time", 'content' => get_post_modified_time('c', false, $this->post['ID']) ],
+            [ 'property' => "og:image", 'content' => issetOrDefault($meta['_yoast_wpseo_opengraph-image'], $image ) ],
+            [ 'property' => "og:image:width", 'content' => $image[1] ],
+            [ 'property' => "og:image:height", 'content' => $image[2] ],
+            [ 'name' =>"twitter:card", 'content' =>  "summary_large_image" ],
+            [ 'name' =>"twitter:description", 'content' =>  issetOrDefault($meta['_yoast_wpseo_twitter-description'], $meta['_yoast_wpseo_title'] ) ],
+            [ 'name' =>"twitter:title", 'content' =>  issetOrDefault($meta['_yoast_wpseo_twitter-title'], $meta['_yoast_wpseo_metadesc'] ) ],
+            [ 'name' =>"twitter:image", 'content' =>  issetOrDefault($meta['_yoast_wpseo_twitter-image'], $image  ) ],
+        );
+
+        return $yoast;
     }
 
     function generate_json() {

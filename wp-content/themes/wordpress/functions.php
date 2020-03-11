@@ -65,3 +65,9 @@ function replace_home_url( $url ) {
 
     return $url;
 }
+
+function issetOrDefault($var, $default) {
+    $val = isset($var) ? $var : $default;
+
+    return is_array($val) ? $val[0] : $val;
+}
